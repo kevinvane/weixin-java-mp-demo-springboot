@@ -4,4 +4,5 @@
 *.classpath
 application.yml
 /.idea/
+/ngrok/*.log
 *.iml

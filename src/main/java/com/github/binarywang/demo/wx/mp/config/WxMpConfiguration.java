@@ -1,28 +1,19 @@
 package com.github.binarywang.demo.wx.mp.config;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.github.binarywang.demo.wx.mp.handler.KfSessionHandler;
-import com.github.binarywang.demo.wx.mp.handler.LocationHandler;
-import com.github.binarywang.demo.wx.mp.handler.LogHandler;
-import com.github.binarywang.demo.wx.mp.handler.MenuHandler;
-import com.github.binarywang.demo.wx.mp.handler.MsgHandler;
-import com.github.binarywang.demo.wx.mp.handler.NullHandler;
-import com.github.binarywang.demo.wx.mp.handler.StoreCheckNotifyHandler;
-import com.github.binarywang.demo.wx.mp.handler.SubscribeHandler;
-import com.github.binarywang.demo.wx.mp.handler.UnsubscribeHandler;
+import com.github.binarywang.demo.wx.mp.handler.*;
 import com.google.common.collect.Maps;
 import me.chanjar.weixin.mp.api.WxMpInMemoryConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.constant.WxMpEventConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static me.chanjar.weixin.common.api.WxConsts.*;
 
@@ -43,6 +34,7 @@ public class WxMpConfiguration {
     private MsgHandler msgHandler;
     private UnsubscribeHandler unsubscribeHandler;
     private SubscribeHandler subscribeHandler;
+    private DeviceHandler deviceHandler;
 
     private WxMpProperties properties;
 
@@ -53,7 +45,7 @@ public class WxMpConfiguration {
     public WxMpConfiguration(LogHandler logHandler, NullHandler nullHandler, KfSessionHandler kfSessionHandler,
                              StoreCheckNotifyHandler storeCheckNotifyHandler, LocationHandler locationHandler,
                              MenuHandler menuHandler, MsgHandler msgHandler, UnsubscribeHandler unsubscribeHandler,
-                             SubscribeHandler subscribeHandler, WxMpProperties properties) {
+                             SubscribeHandler subscribeHandler,DeviceHandler deviceHandler, WxMpProperties properties) {
         this.logHandler = logHandler;
         this.nullHandler = nullHandler;
         this.kfSessionHandler = kfSessionHandler;
@@ -63,6 +55,7 @@ public class WxMpConfiguration {
         this.msgHandler = msgHandler;
         this.unsubscribeHandler = unsubscribeHandler;
         this.subscribeHandler = subscribeHandler;
+        this.deviceHandler = deviceHandler;
         this.properties = properties;
     }
 
@@ -148,6 +141,10 @@ public class WxMpConfiguration {
         // 扫码事件
         newRouter.rule().async(false).msgType(XmlMsgType.EVENT)
             .event(EventType.SCAN).handler(this.nullHandler).end();
+
+        // 设备
+        newRouter.rule().async(false).msgType(XmlMsgType.DEVICE_EVENT)
+            .handler(this.deviceHandler).end();
 
         // 默认
         newRouter.rule().async(false).handler(this.msgHandler).end();

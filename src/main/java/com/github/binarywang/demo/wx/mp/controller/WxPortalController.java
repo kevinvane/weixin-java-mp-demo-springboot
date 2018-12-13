@@ -55,7 +55,7 @@ public class WxPortalController {
                        @RequestParam("signature") String signature,
                        @RequestParam("timestamp") String timestamp,
                        @RequestParam("nonce") String nonce,
-                       @RequestParam("openid") String openid,
+                       @RequestParam(name = "openid", required = false) String openid, //设备事件不带有 openid 参数
                        @RequestParam(name = "encrypt_type", required = false) String encType,
                        @RequestParam(name = "msg_signature", required = false) String msgSignature) {
         final WxMpService wxService = WxMpConfiguration.getMpServices().get(appid);
